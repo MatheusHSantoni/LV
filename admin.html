@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Editor local | Lívia Medeiros</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/admin.js" defer></script>
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand"><span class="brand-mark">LM</span><span><strong>Lívia Medeiros</strong><small>Editor de conteúdo local</small></span></div>
+      <nav class="admin-nav" aria-label="Seções do editor">
+        <a href="#apresentacao">Apresentação</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#perguntas">Perguntas</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <div class="sidebar-bottom"><a href="index.html" target="_blank" rel="noopener">Ver site</a><button id="reset" type="button">Restaurar dados padrão</button></div>
+    </aside>
+    <main class="admin-main">
+      <div class="admin-top"><div><span class="overline">GERENCIAMENTO DE CONTEÚDO</span><h1>Painel de edição</h1><p>Altere os textos, serviços, perguntas e canais de atendimento. Depois clique em Salvar.</p></div></div>
+      <div class="flash error" role="note">Modo de teste: as alterações são salvas somente neste navegador. Esta página não possui login seguro nem publica mudanças para outros visitantes.</div>
+      <form id="editor-form">
+        <section class="admin-panel" id="apresentacao">
+          <div class="admin-section-head"><h2>Página inicial</h2><p>Identidade e mensagem principal do site.</p></div>
+          <div class="admin-fields two-col">
+            <div class="field"><label for="name">Nome profissional</label><input id="name" name="name" maxlength="100" required></div>
+            <div class="field"><label for="subtitle">Subtítulo</label><input id="subtitle" name="subtitle" maxlength="120"></div>
+            <div class="field span-2"><label for="badge">Destaque superior</label><input id="badge" name="badge" maxlength="150"></div>
+            <div class="field span-2"><label for="title">Título principal</label><input id="title" name="title" maxlength="220" required></div>
+            <div class="field span-2"><label for="highlight">Trecho do título em roxo</label><input id="highlight" name="highlight" maxlength="120"></div>
+            <div class="field span-2"><label for="description">Apresentação</label><textarea id="description" name="description" rows="4" maxlength="1000"></textarea></div>
+          </div>
+          <div class="field" style="margin-top:20px"><label for="photo">Fotografia profissional</label>
+            <div class="photo-edit"><img id="photo-preview" src="assets/img/livia-perfil.png" alt="Prévia da foto"><div><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG ou WebP, até 1 MB. A imagem fica salva localmente neste navegador.</small><button id="restore-photo" type="button" class="back-link">Usar foto original</button></div></div>
+          </div>
+        </section>
+        <section class="admin-panel" id="sobre">
+          <div class="admin-section-head"><h2>Sobre a profissional</h2></div>
+          <div class="admin-fields"><div class="field"><label for="aboutTitle">Título da seção</label><input id="aboutTitle" name="aboutTitle" maxlength="120"></div><div class="field"><label for="about">Texto de apresentação</label><textarea id="about" name="about" rows="6" maxlength="2500"></textarea></div></div>
+        </section>
+        <section class="admin-panel" id="servicos">
+          <div class="admin-section-head"><h2>Serviços</h2><p>Edite os cartões ou inclua novos atendimentos.</p></div>
+          <div id="services-editor"></div>
+          <button class="btn btn-outline" type="button" id="add-service">+ Adicionar serviço</button>
+        </section>
+        <section class="admin-panel" id="perguntas">
+          <div class="admin-section-head"><h2>Perguntas frequentes</h2></div>
+          <div id="faqs-editor"></div>
+          <button class="btn btn-outline" type="button" id="add-faq">+ Adicionar pergunta</button>
+        </section>
+        <section class="admin-panel" id="contato">
+          <div class="admin-section-head"><h2>Contato e informações</h2></div>
+          <div class="admin-fields two-col">
+            <div class="field"><label for="whatsapp">WhatsApp</label><input id="whatsapp" name="whatsapp" maxlength="25" inputmode="tel"></div>
+            <div class="field"><label for="instagram">Usuário Instagram</label><input id="instagram" name="instagram" maxlength="31"></div>
+            <div class="field"><label for="city">Cidade</label><input id="city" name="city" maxlength="100"></div>
+            <div class="field"><label for="hours">Horários</label><input id="hours" name="hours" maxlength="150"></div>
+            <div class="field span-2"><label for="address">Endereço (opcional)</label><input id="address" name="address" maxlength="250"></div>
+            <div class="field span-2"><label for="footer">Descrição do rodapé</label><textarea id="footer" name="footer" rows="3" maxlength="350"></textarea></div>
+          </div>
+        </section>
+        <div class="save-row"><button class="btn btn-primary" type="submit">Salvar alterações</button></div>
+        <p id="save-feedback" class="flash success" role="status" hidden></p>
+      </form>
+      <p class="admin-foot">Editor de protótipo. Para publicação com login, conectar Supabase ou outro serviço de backend.</p>
+    </main>
+  </div>
+</body>
+</html>
