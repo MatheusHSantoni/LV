@@ -1,6 +1,6 @@
 # Lívia Medeiros — site institucional (frontend)
 
-Projeto com HTML, CSS e JavaScript. **Não precisa de Python.**
+Projeto com HTML, CSS e JavaScript. 
 
 ## Arquivos
 
