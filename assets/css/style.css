@@ -982,3 +982,47 @@ img {
   bottom:15px}
 }
 
+
+.portrait-name .crefito {
+  display:block;
+  margin-top:4px;
+  font-size:10px;
+  letter-spacing:.2px;
+  color:var(--muted);
+}
+.instagram-link svg,.contact-icon svg {
+  display:block;
+  width:20px;
+  height:20px;
+}
+.testimonial-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:22px;
+}
+.testimonial-card {
+  border:1px solid var(--line);
+  border-radius:23px;
+  padding:27px;
+  background:#fff;
+  box-shadow:0 12px 26px rgba(75,33,90,.055);
+}
+.testimonial-label {
+  font-size:11px;
+  font-weight:700;
+  color:var(--purple);
+  background:#f0e2f3;
+  padding:6px 11px;
+  border-radius:15px;
+}
+.testimonial-message {
+  color:var(--muted);
+  line-height:1.8;
+  margin:22px 0;
+}
+.testimonial-card strong {
+  font-size:14px;
+}
+@media(max-width:800px) {
+  .testimonial-grid { grid-template-columns:1fr; }
+}

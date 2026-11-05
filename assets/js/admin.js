@@ -1,7 +1,7 @@
 'use strict';
 
 const form = document.getElementById('editor-form');
-const fields = ['name', 'subtitle', 'badge', 'title', 'highlight', 'description', 'aboutTitle', 'about', 'whatsapp', 'instagram', 'city', 'hours', 'address', 'footer'];
+const fields = ['name', 'subtitle', 'crefito', 'badge', 'title', 'highlight', 'description', 'aboutTitle', 'about', 'whatsapp', 'instagram', 'city', 'hours', 'address', 'footer'];
 let content = getData();
 
 function createField(labelText, value, type = 'input') {
@@ -24,15 +24,21 @@ function renderItems(type, containerId) {
   content[type].forEach((item, index) => {
     const panel = document.createElement('div');
     panel.className = 'editable-item';
-    const title = createField(type === 'services' ? 'Nome do serviço' : 'Pergunta', item.title || item.question);
-    const description = createField(type === 'services' ? 'Descrição' : 'Resposta', item.description || item.answer, 'textarea');
+    const labels = {
+      services: ['Nome do serviço', 'Descrição', 'title', 'description'],
+      faqs: ['Pergunta', 'Resposta', 'question', 'answer'],
+      testimonials: ['Nome ilustrativo', 'Relato ilustrativo', 'name', 'message']
+    };
+    const [titleLabel, descriptionLabel, titleKey, descriptionKey] = labels[type];
+    const title = createField(titleLabel, item[titleKey]);
+    const description = createField(descriptionLabel, item[descriptionKey], 'textarea');
     title.input.required = true;
     description.input.required = true;
     title.input.addEventListener('input', () => {
-      item[type === 'services' ? 'title' : 'question'] = title.input.value;
+      item[titleKey] = title.input.value;
     });
     description.input.addEventListener('input', () => {
-      item[type === 'services' ? 'description' : 'answer'] = description.input.value;
+      item[descriptionKey] = description.input.value;
     });
     const remove = document.createElement('button');
     remove.type = 'button';
@@ -54,17 +60,22 @@ function render() {
   document.getElementById('photo-preview').src = content.photo || DEFAULT_DATA.photo;
   renderItems('services', 'services-editor');
   renderItems('faqs', 'faqs-editor');
+  renderItems('testimonials', 'testimonials-editor');
 }
 
 function addItem(type, containerId) {
   const id = Math.max(0, ...content[type].map(item => item.id || 0)) + 1;
-  content[type].push(type === 'services'
-    ? { id, title: '', description: '' }
-    : { id, question: '', answer: '' });
+  const blankItems = {
+    services: { id, title: '', description: '' },
+    faqs: { id, question: '', answer: '' },
+    testimonials: { id, name: '', message: '' }
+  };
+  content[type].push(blankItems[type]);
   renderItems(type, containerId);
 }
 
 document.getElementById('add-service').addEventListener('click', () => addItem('services', 'services-editor'));
+document.getElementById('add-testimonial').addEventListener('click', () => addItem('testimonials', 'testimonials-editor'));
 document.getElementById('add-faq').addEventListener('click', () => addItem('faqs', 'faqs-editor'));
 document.getElementById('restore-photo').addEventListener('click', () => {
   content.photo = DEFAULT_DATA.photo;
@@ -95,6 +106,7 @@ form.addEventListener('submit', event => {
   });
   content.services = content.services.filter(item => item.title.trim());
   content.faqs = content.faqs.filter(item => item.question.trim());
+  content.testimonials = content.testimonials.filter(item => item.name.trim() && item.message.trim());
   try {
     saveData(content);
     const feedback = document.getElementById('save-feedback');
@@ -108,6 +120,7 @@ form.addEventListener('submit', event => {
 document.getElementById('reset').addEventListener('click', () => {
   if (!confirm('Restaurar os dados originais? As alterações locais serão perdidas.')) return;
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(CONTENT_VERSION_KEY);
   content = getData();
   render();
   document.getElementById('save-feedback').hidden = true;
