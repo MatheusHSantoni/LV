@@ -89,6 +89,16 @@ function renderServices() {
   });
 }
 
+function renderTestimonials() {
+  const grid = document.getElementById('testimonial-grid');
+  (data.testimonials || []).forEach(testimonial => {
+    const card = element('article', 'testimonial-card');
+    card.append(element('p', 'testimonial-message', `“${testimonial.message}”`));
+    card.append(element('strong', '', testimonial.name));
+    grid.append(card);
+  });
+}
+
 function renderFaqs() {
   const list = document.getElementById('faq-list');
   data.faqs.forEach(faq => {
@@ -126,4 +136,5 @@ document.getElementById('contact-form').addEventListener('submit', event => {
 
 renderText();
 renderServices();
+renderTestimonials();
 renderFaqs();
