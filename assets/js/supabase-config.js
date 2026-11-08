@@ -1,0 +1,4 @@
+'use strict';
+
+const SUPABASE_URL = '';
+const SUPABASE_PUBLISHABLE_KEY = '';

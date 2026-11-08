@@ -3,6 +3,45 @@
 const form = document.getElementById('editor-form');
 const fields = ['name', 'subtitle', 'crefito', 'badge', 'title', 'highlight', 'description', 'aboutTitle', 'about', 'whatsapp', 'instagram', 'city', 'hours', 'address', 'footer'];
 let content = getData();
+let selectedPhoto = null;
+const loginSection = document.getElementById('login-section');
+const adminShell = document.getElementById('admin-shell');
+const loginFeedback = document.getElementById('login-feedback');
+
+function showLogin(message = '') {
+  adminShell.hidden = true;
+  loginSection.hidden = false;
+  loginFeedback.textContent = message;
+  loginFeedback.hidden = !message;
+}
+
+async function isAdmin(user) {
+  if (!user) return false;
+  const { data, error } = await db.from('site_admins').select('user_id').eq('user_id', user.id).maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
+}
+
+async function startAdmin() {
+  if (!db) {
+    showLogin('Configure a URL e a chave pública do Supabase no arquivo supabase-config.js.');
+    return;
+  }
+  try {
+    const { data: { user }, error } = await db.auth.getUser();
+    if (error || !user || !(await isAdmin(user))) {
+      showLogin(user ? 'Esta conta não tem permissão de administrador.' : '');
+      return;
+    }
+    content = await loadSiteData();
+    render();
+    loginSection.hidden = true;
+    adminShell.hidden = false;
+  } catch (error) {
+    showLogin('Não foi possível verificar o acesso. Confira a conexão e as políticas de segurança.');
+  }
+}
+
 
 function createField(labelText, value, type = 'input') {
   const wrapper = document.createElement('div');
@@ -79,6 +118,7 @@ document.getElementById('add-testimonial').addEventListener('click', () => addIt
 document.getElementById('add-faq').addEventListener('click', () => addItem('faqs', 'faqs-editor'));
 document.getElementById('restore-photo').addEventListener('click', () => {
   content.photo = DEFAULT_DATA.photo;
+  selectedPhoto = null;
   document.getElementById('photo').value = '';
   document.getElementById('photo-preview').src = content.photo;
 });
@@ -91,39 +131,70 @@ document.getElementById('photo').addEventListener('change', event => {
     event.target.value = '';
     return;
   }
-  const reader = new FileReader();
-  reader.addEventListener('load', () => {
-    content.photo = reader.result;
-    document.getElementById('photo-preview').src = reader.result;
-  });
-  reader.readAsDataURL(file);
+  selectedPhoto = file;
+  document.getElementById('photo-preview').src = URL.createObjectURL(file);
 });
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
-  fields.forEach(field => {
-    content[field] = form.elements[field].value.trim();
-  });
-  content.services = content.services.filter(item => item.title.trim());
-  content.faqs = content.faqs.filter(item => item.question.trim());
-  content.testimonials = content.testimonials.filter(item => item.name.trim() && item.message.trim());
+  const button = form.querySelector('[type="submit"]');
+  button.disabled = true;
+  const feedback = document.getElementById('save-feedback');
+  feedback.hidden = false;
+  feedback.textContent = 'Salvando...';
   try {
-    saveData(content);
-    const feedback = document.getElementById('save-feedback');
-    feedback.hidden = false;
-    feedback.textContent = 'Dados salvos neste navegador. Abra o site público ou atualize a página para conferir.';
+    const { data: { user }, error: authError } = await db.auth.getUser();
+    if (authError || !(await isAdmin(user))) throw new Error('Acesso não autorizado.');
+    fields.forEach(field => { content[field] = form.elements[field].value.trim(); });
+    content.services = content.services.filter(item => item.title.trim() && item.description.trim());
+    content.faqs = content.faqs.filter(item => item.question.trim() && item.answer.trim());
+    content.testimonials = content.testimonials.filter(item => item.name.trim() && item.message.trim());
+    if (selectedPhoto) {
+      const extension = selectedPhoto.type.split('/')[1].replace('jpeg', 'jpg');
+      const path = `profile/${crypto.randomUUID()}.${extension}`;
+      const { error: uploadError } = await db.storage.from('site-images').upload(path, selectedPhoto, {
+        contentType: selectedPhoto.type,
+        upsert: false
+      });
+      if (uploadError) throw uploadError;
+      content.photo = db.storage.from('site-images').getPublicUrl(path).data.publicUrl;
+    }
+    const { error } = await db.from('site_content').upsert({ id: 1, content }, { onConflict: 'id' });
+    if (error) throw error;
+    selectedPhoto = null;
+    document.getElementById('photo').value = '';
+    feedback.textContent = 'Alterações publicadas com sucesso.';
   } catch (error) {
-    alert('Não foi possível salvar. O armazenamento do navegador pode estar cheio.');
+    feedback.textContent = `Erro ao salvar: ${error.message}`;
+  } finally {
+    button.disabled = false;
   }
 });
 
-document.getElementById('reset').addEventListener('click', () => {
-  if (!confirm('Restaurar os dados originais? As alterações locais serão perdidas.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(CONTENT_VERSION_KEY);
-  content = getData();
-  render();
-  document.getElementById('save-feedback').hidden = true;
+document.getElementById('login-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!db) return;
+  const button = event.currentTarget.querySelector('button');
+  button.disabled = true;
+  loginFeedback.hidden = true;
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  try {
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    await startAdmin();
+  } catch (error) {
+    showLogin('Não foi possível entrar. Confira os dados e a permissão de acesso.');
+  } finally {
+    button.disabled = false;
+    document.getElementById('login-password').value = '';
+  }
 });
 
-render();
+document.getElementById('logout').addEventListener('click', async () => {
+  await db.auth.signOut();
+  content = getData();
+  showLogin();
+});
+
+startAdmin();

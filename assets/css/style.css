@@ -77,12 +77,16 @@ img {
   background:var(--purple);
   color:white;
   display:grid;
-  place-items:center;
-  font-family:Georgia,serif;
-  font-weight:700;
-  font-size:17px;
-  border:3px solid #dbc4e5;
+  place-
+  border:0;
+  background:transparent;
+  border-radius:0;
   flex:none}
+.brand-logo {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain}
 .brand-copy {
   display:flex;
   flex-direction:column;
@@ -217,7 +221,8 @@ img {
   box-shadow:20px 20px 50px rgba(84,44,107,.12);
   background:#faf6fc;
   outline:2px dashed #d7bedf;
-  outline-offset:7px}
+  outline-offset:7px;
+  position:relative}
 .portrait-inner {
   width:100%;
   height:100%;
@@ -252,6 +257,7 @@ img {
   bottom:23px;
   left:50%;
   transform:translateX(-50%);
+  z-index: 3;
   border:1px solid #c7a5d5;
   background:#fff;
   border-radius:40px;
@@ -805,6 +811,36 @@ img {
   background:#fbe7ec;
   color:#95384a}
 
+.butterfly-orbit {
+  position:absolute;
+  inset:-20px;
+  z-index:1;
+  border-radius:50%;
+  pointer-events:none;
+  animation:butterfly-orbit 13s linear infinite}
+.butterfly-orbit img {
+  position:absolute;
+  top:-13px;
+  left:50%;
+  width:39px;
+  height:39px;
+  max-width:none;
+  transform:translateX(-50%);
+  animation:butterfly-flutter 2.2s ease-in-out infinite;
+  filter: grayscale(1) brightness(1.25)
+  drop-shadow(0 0 6px #c0c0c0);}
+
+
+@keyframes butterfly-orbit {
+  to {transform:rotate(360deg)}
+}
+@keyframes butterfly-flutter {
+  0%,100% {transform:translateX(-50%) rotate(-12deg) scale(1)}
+  50% {transform:translateX(-50%) rotate(12deg) scale(1.1)}
+}
+@media(prefers-reduced-motion:reduce) {
+  .butterfly-orbit,.butterfly-orbit img {animation:none}
+}
 @media(max-width:1050px) {
   .nav {
   gap:12px;
@@ -1026,6 +1062,15 @@ img {
 @media(max-width:800px) {
   .testimonial-grid { grid-template-columns:1fr; }
 }
+
+[hidden] { display:none !important; }
+.admin-login { min-height:100vh; display:grid; place-items:center; padding:24px; background:#f8f2fc; }
+.admin-login-card { width:min(100%,440px); display:grid; gap:16px; }
+.admin-login-card h1 { margin:0; }
+.admin-login-card .back-link { text-align:center; }
+00px) {
+  .testimonial-grid { grid-template-columns:1fr; }
+}
 .brand-mark {
   display: flex;
   align-items: center;
@@ -1043,4 +1088,44 @@ img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+.butterfly-orbit {
+  position: absolute;
+  inset: -18px;
+  pointer-events: none;
+  animation: butterfly-spin 12s linear infinite;
+}
+
+.butterfly-orbit img {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translateX(-50%);
+  animation: butterfly-float 2.4s ease-in-out infinite;
+}
+
+@keyframes butterfly-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes butterfly-float {
+  0% {
+    transform: translateX(-50%) scale(1) rotate(-8deg);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.06) rotate(8deg);
+  }
+
+  100% {
+    transform: translateX(-50%) scale(1) rotate(-8deg);
+  }
 }

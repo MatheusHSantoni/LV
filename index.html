@@ -11,15 +11,16 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/supabase-config.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+  <script src="assets/js/supabase-client.js" defer></script>
   <script src="assets/js/site.js" defer></script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#inicio" aria-label="Voltar ao início">
-        <span class="brand-mark">
-  <img src="assets/img/logo-livia.png" alt="Logomarca Lívia Medeiros" class="brand-logo">
-</span>
+        <span class="brand-mark"><img class="brand-logo" src="assets/img/logo-livia.png" alt="Logomarca Lívia Medeiros"></span>
         <span class="brand-copy"><strong data-field="name">Lívia Medeiros</strong><small data-field="subtitle">FISIOTERAPEUTA · SAÚDE DA MULHER</small></span>
       </a>
       <button class="mobile-menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-menu">☰</button>
@@ -49,7 +50,12 @@
           <div class="hero-trust"><span>✓ Atendimento individualizado</span><span>✓ Cuidado acolhedor</span></div>
         </div>
         <div class="portrait-area">
-          <div class="portrait-ring"><div class="portrait-inner"><img data-photo src="assets/img/livia-perfil.png" alt="Retrato profissional de Lívia Medeiros"></div></div>
+          <div class="portrait-ring">
+            <div class="portrait-inner"><img data-photo src="assets/img/livia-perfil.png" alt="Retrato profissional de Lívia Medeiros"></div>
+            <div class="butterfly-orbit" aria-hidden="true">
+              <img src="assets/img/borboleta.svg" alt="">
+            </div>
+          </div>
           <div class="portrait-tag tag-top">✦ Saúde da mulher</div>
           <div class="portrait-tag tag-side">✿ <span data-field="city"></span></div>
           <div class="portrait-name"><strong data-field="name"></strong><small>FISIOTERAPEUTA</small><small class="crefito" data-field="crefito"></small></div>
@@ -92,9 +98,7 @@
     </section>
     <section class="section-pad testimonials-section" id="depoimentos">
       <div class="container">
-        <div class="section-heading center"><span class="overline">RELATOS DE PACIENTES</span>
-          <h2>Histórias de <em>cuidado e acolhimento</em></h2>
-        </div>
+        <div class="section-heading center"><span class="overline">RELATOS ILUSTRATIVOS</span><h2>Histórias de <em>cuidado e acolhimento</em></h2><p>Exemplos ilustrativos de experiências possíveis. Estes relatos e nomes são inventados e não representam avaliações de pacientes atendidas.</p></div>
         <div class="testimonial-grid" id="testimonial-grid"></div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 'use strict';
 
-const data = getData();
+let data = getData();
 
 function element(tag, className, value) {
   const node = document.createElement(tag);
@@ -73,6 +73,9 @@ function renderServices() {
   const grid = document.getElementById('service-grid');
   const select = document.getElementById('contact-service');
   const icons = ['♡', '✧', '❀', '♧', '✿'];
+  grid.replaceChildren();
+  select.replaceChildren(element('option', '', 'Quero agendar uma avaliação'));
+  select.firstChild.value = 'uma avaliação';
   data.services.forEach((service, index) => {
     const card = element('article', 'service-card');
     card.append(element('div', 'service-icon', icons[index % icons.length]));
@@ -91,6 +94,7 @@ function renderServices() {
 
 function renderTestimonials() {
   const grid = document.getElementById('testimonial-grid');
+  grid.replaceChildren();
   (data.testimonials || []).forEach(testimonial => {
     const card = element('article', 'testimonial-card');
     card.append(element('p', 'testimonial-message', `“${testimonial.message}”`));
@@ -101,6 +105,7 @@ function renderTestimonials() {
 
 function renderFaqs() {
   const list = document.getElementById('faq-list');
+  list.replaceChildren();
   data.faqs.forEach(faq => {
     const details = element('details', 'faq-item');
     const summary = element('summary', '', faq.question);
@@ -138,3 +143,18 @@ renderText();
 renderServices();
 renderTestimonials();
 renderFaqs();
+
+async function refreshSite() {
+  if (!db) return;
+  try {
+    data = await loadSiteData();
+    renderText();
+    renderServices();
+    renderTestimonials();
+    renderFaqs();
+  } catch (error) {
+    console.error('Não foi possível carregar o conteúdo publicado.', error);
+  }
+}
+
+refreshSite();

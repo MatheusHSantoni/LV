@@ -1,10 +1,5 @@
 'use strict';
 
-const STORAGE_KEY = 'livia_site_v1';
-const CONTENT_VERSION_KEY = 'livia_site_catalog_version';
-const CONTENT_VERSION = '3';
-const LEGACY_DESCRIPTION = 'Fisioterapia dedicada à saúde da mulher, com acompanhamento na gestação, no pós-parto, e em cada momento que pede atenção especial.';
-
 const DEFAULT_DATA = {
   name: 'Lívia Medeiros',
   subtitle: 'FISIOTERAPEUTA · SAÚDE DA MULHER',
@@ -44,32 +39,7 @@ const DEFAULT_DATA = {
 };
 
 function getData() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-      const merged = { ...structuredClone(DEFAULT_DATA), ...saved };
-      // Mantém edições anteriores, mas atualiza conteúdo padrão e serviços removidos.
-      if (saved.description === LEGACY_DESCRIPTION) {
-        merged.description = DEFAULT_DATA.description;
-      }
-      // Atualiza somente uma vez o catálogo antigo, preservando textos e contatos salvos.
-      if (localStorage.getItem(CONTENT_VERSION_KEY) !== CONTENT_VERSION) {
-        merged.services = structuredClone(DEFAULT_DATA.services);
-        merged.testimonials = structuredClone(DEFAULT_DATA.testimonials);
-        saveData(merged);
-        localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
-      }
-      return merged;
-    }
-  } catch (error) {
-    console.warn('Não foi possível ler os dados salvos.', error);
-  }
   return structuredClone(DEFAULT_DATA);
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
 }
 
 function whatsappLink(number, message) {
