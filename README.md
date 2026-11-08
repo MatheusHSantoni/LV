@@ -1,44 +1,45 @@
-# Lívia Medeiros — site institucional (frontend)
+# Site da Lívia Medeiros — frontend + Supabase
 
-Projeto com HTML, CSS e JavaScript. 
+HTML, CSS e JavaScript. Sem Python ou backend próprio. Login e gravação online com Supabase.
 
-## Arquivos
+## Configuração obrigatória
 
-- `index.html`: página pública
-- `admin.html`: editor local de conteúdo (protótipo)
-- `assets/css/style.css`: estilos e responsividade
-- `assets/js/data.js`: informações padrão, leitura e salvamento local
-- `assets/js/site.js`: renderização da página pública
-- `assets/js/admin.js`: editor do painel
-- `assets/img/livia-perfil.png`: imagem profissional
+1. Crie um projeto em https://supabase.com/dashboard.
+2. Abra **SQL Editor** e execute `supabase-setup.sql` (uma única vez).
+3. Em **Authentication > Providers > Email**, mantenha login por e-mail e senha habilitado. Desative cadastro público se não precisar de novos usuários.
+4. Em **Authentication > Users**, crie a conta de Lívia com e-mail próprio e senha forte. Copie o **User UID**.
+5. No SQL Editor, execute `insert into public.site_admins (user_id) values ('UUID_DA_LIVIA');`, substituindo pelo UID real.
+6. Em **Project Settings / API Keys** (ou **Connect**), copie a **Project URL** e a chave **publishable** (ou a chave legada `anon`). Coloque as duas em `assets/js/supabase-config.js`.
+7. **Nunca use** a chave `service_role` ou `secret` no HTML/JavaScript. A chave publishable é pública; a segurança vem das políticas RLS.
+8. Abra a pasta no VS Code com **Live Server** e visite `admin.html`. Faça login, edite os dados e clique em **Salvar alterações**.
+9. Acesse `index.html` em outro navegador ou dispositivo para conferir o conteúdo publicado. Publique ambos os arquivos em hospedagem estática com HTTPS.
 
-## Executar
+## Funcionamento
 
-Abra a pasta no VS Code e execute usando a extensão Live Server (ou outro servidor estático local). Abra `index.html` e `admin.html` no mesmo endereço local (mesma origem). Você também pode testar abrindo os arquivos diretamente, mas o comportamento de armazenamento no modo `file://` varia entre navegadores.
+- `index.html`: conteúdo público. Antes da primeira publicação do painel, apresenta os dados de `data.js`.
+- `admin.html`: pede login e verifica permissão na tabela `site_admins` antes de abrir o editor.
+- `assets/js/supabase-config.js`: URL e chave pública do projeto, sem segredos.
+- `assets/js/supabase-client.js`: conecta o frontend ao Supabase e lê conteúdo publicado.
+- `assets/js/admin.js`: salva alterações em `site_content` e envia novas fotos para o bucket público `site-images`.
+- `supabase-setup.sql`: tabelas, políticas RLS e permissões de upload.
 
-## Contatos incluídos
+## Segurança
 
-- Instagram: `@fisiopelvica.livia`
-- WhatsApp: `(83) 99395-0371` (link `wa.me/5583993950371`)
-- CREFITO: CREFITO 21 - 446966-F exibido próximo à foto e editável no painel.
+- As regras RLS do banco impedem que visitantes modifiquem conteúdo, mesmo enviando requisições diretamente à API.
+- Apenas os UIDs inseridos manualmente em `site_admins` podem publicar conteúdo ou enviar fotos.
+- O arquivo `admin.html` é público para download, **mas as operações protegidas exigem autenticação e autorização no servidor**.
+- Fotos da profissional são públicas; **não envie documentos de pacientes** para esse bucket.
+- Os comentários de exemplo não são avaliações verdadeiras. Substitua por relatos autorizados antes de divulgar comercialmente.
+- Faça backups periódicos do conteúdo e proteja a conta de e-mail usada na recuperação de senha. Não há cadastro ou recuperação de senha personalizada neste frontend; a conta pode ser gerenciada no painel do Supabase.
 
-## Limitação importante
+## Limitação de configuração
 
-O editor `admin.html` **não possui autenticação**. As alterações são gravadas via `localStorage` apenas no navegador/dispositivo usado. Ele é um protótipo para testar layout e edição, **não um painel seguro e funcional para publicação na internet**. Não publique `admin.html` como área administrativa definitiva.
+Sem as credenciais do seu projeto Supabase e o UID da conta administrativa, **a integração não fica ativa**. O site continua exibindo o conteúdo inicial, mas o editor permanece bloqueado. Não compartilhe senhas nem chaves secretas.
 
-Para sua esposa atualizar o site e todos os visitantes verem o resultado, a próxima etapa é conectar a um serviço como Supabase, com login seguro, políticas de acesso e armazenamento de imagens. Isso continua sem exigir Python ou servidor próprio.
+## Identidade visual e animação
 
-As descrições são exemplos iniciais: a profissional deve revisar os textos clínicos antes da publicação.
-
-## Atualizações confirmadas
-
-- CREFITO `CREFITO 21 - 446966-F` ao lado da foto e editável pelo painel.
-- Cinco serviços: Dor na relação sexual; Endometriose e dor pélvica; Incontinência urinária (perda de xixi); Gestação e Pós-parto; Atendimento personalizado.
-- Pilates Solo e apoio à amamentação removidos.
-- Cinco relatos ilustrativos exibindo apenas nome e comentário em cada cartão; a seção esclarece que **não são avaliações reais**. Antes da publicação, substitua por depoimentos autênticos com autorização.
-- Os dados padrão ficam em `assets/js/data.js`. O `index.html` contém a estrutura da página, e o `site.js` apresenta os dados. Edições salvas no painel prevalecem sobre os dados padrão.
-- Uma atualização única do catálogo substitui a lista antiga de serviços e relatos no armazenamento local; outras informações salvas são preservadas. As alterações futuras no painel serão mantidas.
-
-## Limitações da área administrativa
-
-O `admin.html` continua sendo um protótipo, sem login seguro e com salvamento apenas no navegador (localStorage). Para edições aparecerem para todos, é necessário integrar serviço de dados/autenticação como Supabase.
+- `assets/img/logo-livia.png`: logomarca da Lívia no cabeçalho.
+- `assets/img/borboleta.svg`: borboleta ilustrativa que gira ao redor da foto principal.
+- No `index.html`, a animação está dentro de `.portrait-ring`, sem precisar de JavaScript.
+- Em `assets/css/style.css`, ajuste `13s` em `.butterfly-orbit` para controlar a velocidade.
+- Para pessoas que preferem reduzir animações, a borboleta fica parada automaticamente.
