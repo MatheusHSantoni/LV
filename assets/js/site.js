@@ -83,8 +83,9 @@ function renderServices() {
   const select = document.getElementById('contact-service');
   const icons = ['♡', '✧', '❀', '♧', '✿'];
   grid.replaceChildren();
-  select.replaceChildren(element('option', '', 'Quero agendar uma avaliação'));
-  select.firstChild.value = 'uma avaliação';
+  const selectedService = select.value;
+  const defaultOption = select.options[0];
+  select.replaceChildren(defaultOption);
   data.services.forEach((service, index) => {
     const card = element('article', 'service-card');
     card.append(element('div', 'service-icon', icons[index % icons.length]));
@@ -99,6 +100,9 @@ function renderServices() {
     option.value = service.title;
     select.append(option);
   });
+  if (Array.from(select.options).some(option => option.value === selectedService)) {
+    select.value = selectedService;
+  }
 }
 
 function renderTestimonials() {
@@ -148,22 +152,23 @@ document.getElementById('contact-form').addEventListener('submit', event => {
   else alert('O WhatsApp ainda não foi configurado.');
 });
 
-renderText();
-renderServices();
-renderTestimonials();
-renderFaqs();
+function renderSite() {
+  renderText();
+  renderServices();
+  renderTestimonials();
+  renderFaqs();
+}
 
 async function refreshSite() {
+  await supabaseReady;
   if (!db) return;
   try {
     data = await loadSiteData();
-    renderText();
-    renderServices();
-    renderTestimonials();
-    renderFaqs();
+    renderSite();
   } catch (error) {
     console.error('Não foi possível carregar o conteúdo publicado.', error);
   }
 }
 
+renderSite();
 refreshSite();

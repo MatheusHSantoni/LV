@@ -71,17 +71,13 @@ img {
   gap:12px;
   min-width:0}
 .brand-mark {
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  background:var(--purple);
-  color:white;
-  display:grid;
-  place-
-  border:0;
-  background:transparent;
-  border-radius:0;
-  flex:none}
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  width:52px;
+  height:52px;
+  color:white}
 .brand-logo {
   display:block;
   width:100%;
@@ -592,9 +588,6 @@ img {
   z-index:10}
 
 
-.instagram-link[hidden],.floating-whats[hidden] {
-  display:none}
-
 /* Painel administrativo */
 
 .back-link {
@@ -781,30 +774,29 @@ img {
 
 .butterfly-orbit {
   position:absolute;
-  inset:-20px;
+  inset:-18px;
   z-index:1;
   border-radius:50%;
   pointer-events:none;
-  animation:butterfly-orbit 13s linear infinite}
+  animation:butterfly-spin 12s linear infinite}
 .butterfly-orbit img {
   position:absolute;
-  top:-13px;
+  top:-10px;
   left:50%;
-  width:39px;
-  height:39px;
+  width:34px;
+  height:34px;
   max-width:none;
   transform:translateX(-50%);
-  animation:butterfly-flutter 2.2s ease-in-out infinite;
-  filter: grayscale(1) brightness(1.25)
-  drop-shadow(0 0 6px #c0c0c0);}
+  animation:butterfly-float 2.4s ease-in-out infinite;
+  filter:grayscale(1) brightness(1.25) drop-shadow(0 0 6px #c0c0c0)}
 
 
-@keyframes butterfly-orbit {
+@keyframes butterfly-spin {
   to {transform:rotate(360deg)}
 }
-@keyframes butterfly-flutter {
-  0%,100% {transform:translateX(-50%) rotate(-12deg) scale(1)}
-  50% {transform:translateX(-50%) rotate(12deg) scale(1.1)}
+@keyframes butterfly-float {
+  0%,100% {transform:translateX(-50%) scale(1) rotate(-8deg)}
+  50% {transform:translateX(-50%) scale(1.06) rotate(8deg)}
 }
 @media(prefers-reduced-motion:reduce) {
   .butterfly-orbit,.butterfly-orbit img {animation:none}
@@ -921,9 +913,6 @@ img {
 @media(max-width:600px) {
   .container {
   width:min(100% - 32px,1140px)}
-.brand-mark {
-  width:40px;
-  height:40px}
 .brand-copy strong {
   font-size:16px}
 .brand-copy small {
@@ -1011,14 +1000,6 @@ img {
   background:#fff;
   box-shadow:0 12px 26px rgba(75,33,90,.055);
 }
-.testimonial-label {
-  font-size:11px;
-  font-weight:700;
-  color:var(--purple);
-  background:#f0e2f3;
-  padding:6px 11px;
-  border-radius:15px;
-}
 .testimonial-message {
   color:var(--muted);
   line-height:1.8;
@@ -1036,69 +1017,3 @@ img {
 .admin-login-card { width:min(100%,440px); display:grid; gap:16px; }
 .admin-login-card h1 { margin:0; }
 .admin-login-card .back-link { text-align:center; }
-00px) {
-  .testimonial-grid { grid-template-columns:1fr; }
-}
-.brand-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  flex-shrink: 0;
-}
-
-.brand-logo {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.butterfly-orbit {
-  position: absolute;
-  inset: -18px;
-  pointer-events: none;
-  animation: butterfly-spin 12s linear infinite;
-}
-
-.butterfly-orbit img {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  width: 34px;
-  height: 34px;
-  transform: translateX(-50%);
-  animation: butterfly-float 2.4s ease-in-out infinite;
-}
-
-@keyframes butterfly-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes butterfly-float {
-  0% {
-    transform: translateX(-50%) scale(1) rotate(-8deg);
-  }
-
-  50% {
-    transform: translateX(-50%) scale(1.06) rotate(8deg);
-  }
-
-  100% {
-    transform: translateX(-50%) scale(1) rotate(-8deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .butterfly-orbit,.butterfly-orbit img {
-    animation:none}
-}

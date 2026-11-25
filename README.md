@@ -1,6 +1,6 @@
 # Site da Lívia Medeiros — frontend + Supabase
 
-HTML, CSS e JavaScript. Sem Python ou backend próprio. Login e gravação online com Supabase.
+Site em HTML, CSS e JavaScript. A Vercel protege o acesso ao painel, e o Supabase permite publicar conteúdo para todos os visitantes.
 
 ## Configuração para publicação online
 
@@ -16,8 +16,8 @@ HTML, CSS e JavaScript. Sem Python ou backend próprio. Login e gravação onlin
 
 ## Funcionamento
 
-- `index.html`: conteúdo público. Antes da primeira publicação do painel, apresenta os dados de `data.js`.
-- `admin.html`: pede login e verifica permissão na tabela `site_admins` antes de abrir o editor.
+- `index.html`: mostra o conteúdo publicado. Se ele estiver indisponível, usa os dados locais do navegador ou os padrões de `data.js`.
+- `admin.html`: quando o Supabase está configurado, pede login e verifica a permissão na tabela `site_admins` antes de abrir o editor.
 - `assets/js/supabase-config.js`: URL e chave pública do projeto, sem segredos.
 - `assets/js/supabase-client.js`: conecta o frontend ao Supabase e lê conteúdo publicado.
 - `assets/js/admin.js`: salva alterações em `site_content` e envia novas fotos para o bucket público `site-images`.

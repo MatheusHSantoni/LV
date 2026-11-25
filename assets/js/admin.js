@@ -1,6 +1,10 @@
 'use strict';
 
 const form = document.getElementById('editor-form');
+const saveButton = form.querySelector('[type="submit"]');
+const loginForm = document.getElementById('login-form');
+const loginButton = loginForm.querySelector('button');
+const resetButton = document.getElementById('reset');
 const fields = ['name', 'subtitle', 'crefito', 'badge', 'title', 'highlight', 'description', 'aboutTitle', 'about', 'whatsapp', 'instagram', 'city', 'hours', 'address', 'footer'];
 const itemFields = {
   services: ['Nome do serviço', 'Descrição', 'title', 'description'],
@@ -39,10 +43,11 @@ async function startAdmin() {
     adminShell.hidden = false;
     document.getElementById('local-editor-note').hidden = false;
     document.getElementById('publication-note').hidden = true;
-    document.getElementById('reset').hidden = false;
+    resetButton.hidden = false;
     logout.hidden = true;
     return;
   }
+  await supabaseReady;
   if (!db) {
     showLogin('Não foi possível carregar a conexão com o Supabase.');
     return;
@@ -61,6 +66,7 @@ async function startAdmin() {
     showLogin('Não foi possível verificar o acesso. Confira a conexão e as políticas de segurança.');
   }
 }
+
 function createField(labelText, value, type = 'input') {
   const wrapper = document.createElement('div');
   wrapper.className = 'field';
@@ -163,8 +169,7 @@ photoInput.addEventListener('change', () => {
 form.addEventListener('input', () => { feedback.hidden = true; });
 form.addEventListener('submit', async event => {
   event.preventDefault();
-  const button = form.querySelector('[type="submit"]');
-  if (button.disabled || (supabaseConfigured && (adminShell.hidden || !db))) return;
+  if (saveButton.disabled || adminShell.hidden) return;
   feedback.hidden = true;
   if (photoReader?.readyState === FileReader.LOADING) {
     alert('Aguarde o carregamento da imagem antes de salvar.');
@@ -179,7 +184,7 @@ form.addEventListener('submit', async event => {
   fields.forEach(field => {
     draft[field] = form.elements[field].value.trim();
   });
-  button.disabled = true;
+  saveButton.disabled = true;
   form.inert = true;
   logout.disabled = true;
   try {
@@ -204,7 +209,7 @@ form.addEventListener('submit', async event => {
       ? 'Não foi possível publicar. Confira o acesso e a conexão com o Supabase.'
       : 'Não foi possível salvar. Verifique o armazenamento do navegador.';
   } finally {
-    button.disabled = false;
+    saveButton.disabled = false;
     form.inert = false;
     logout.disabled = false;
   }
@@ -227,7 +232,7 @@ async function publishContent(draft, photo) {
   if (error) throw error;
 }
 
-document.getElementById('reset').addEventListener('click', () => {
+resetButton.addEventListener('click', () => {
   if (!confirm('Restaurar os dados originais? As alterações locais serão perdidas.')) return;
   try {
     localStorage.removeItem(STORAGE_KEY);
@@ -242,11 +247,10 @@ document.getElementById('reset').addEventListener('click', () => {
   feedback.hidden = true;
 });
 
-document.getElementById('login-form').addEventListener('submit', async event => {
+loginForm.addEventListener('submit', async event => {
   event.preventDefault();
-  if (!db) return;
-  const button = event.currentTarget.querySelector('button');
-  button.disabled = true;
+  if (!db || loginButton.disabled) return;
+  loginButton.disabled = true;
   loginFeedback.hidden = true;
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -257,24 +261,32 @@ document.getElementById('login-form').addEventListener('submit', async event => 
   } catch (error) {
     showLogin('Não foi possível entrar. Confira os dados e a permissão de acesso.');
   } finally {
-    button.disabled = false;
+    loginButton.disabled = false;
     document.getElementById('login-password').value = '';
   }
 });
 
 logout.addEventListener('click', async () => {
-  const { error } = await db.auth.signOut();
-  if (error) {
+  logout.disabled = true;
+  saveButton.disabled = true;
+  form.inert = true;
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+    photoReader?.abort();
+    selectedPhoto = null;
+    photoInput.value = '';
+    feedback.hidden = true;
+    content = getData();
+    showLogin();
+  } catch {
     feedback.hidden = false;
     feedback.textContent = 'Não foi possível encerrar a sessão. Tente novamente.';
-    return;
+  } finally {
+    logout.disabled = false;
+    saveButton.disabled = false;
+    form.inert = false;
   }
-  photoReader?.abort();
-  selectedPhoto = null;
-  photoInput.value = '';
-  feedback.hidden = true;
-  content = getData();
-  showLogin();
 });
 
 startAdmin();
