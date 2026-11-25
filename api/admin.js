@@ -4,7 +4,7 @@ const { createHash, timingSafeEqual } = require('node:crypto');
 const { readFile } = require('node:fs/promises');
 const { join } = require('node:path');
 
-const USERNAME = 'liviavaleskaduarte10@gmail.com';
+const USERNAME = 'Msantoni';
 const ADMIN_PAGE = join(__dirname, '..', 'admin.html');
 
 function digest(value) {

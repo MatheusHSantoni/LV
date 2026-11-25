@@ -35,7 +35,7 @@ Site em HTML, CSS e JavaScript. A Vercel protege o acesso ao painel, e o Supabas
 ## Acesso ao painel na Vercel
 
 1. Em **Settings → Environment Variables**, adicione `ADMIN_PASSWORD` como variável **Sensitive** em **Production** e, se necessário, **Preview**.
-2. Faça um novo deploy e abra `/admin`. Entre com `liviavaleskaduarte10@gmail.com` e a senha definida na Vercel.
+2. Faça um novo deploy e abra `/admin`. Entre com o usuário `Msantoni` e a senha definida na Vercel.
 3. Com o Supabase configurado, entre também no formulário do painel com a conta habilitada em `site_admins` para publicar conteúdo.
 
 ## Limitação de configuração
