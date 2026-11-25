@@ -1,5 +1,10 @@
 'use strict';
 
+const STORAGE_KEY = 'livia_site_v1';
+const CONTENT_VERSION_KEY = 'livia_site_catalog_version';
+const CONTENT_VERSION = '3';
+const LEGACY_DESCRIPTION = 'Fisioterapia dedicada à saúde da mulher, com acompanhamento na gestação, no pós-parto, e em cada momento que pede atenção especial.';
+
 const DEFAULT_DATA = {
   name: 'Lívia Medeiros',
   subtitle: 'FISIOTERAPEUTA · SAÚDE DA MULHER',
@@ -38,8 +43,54 @@ const DEFAULT_DATA = {
   ]
 };
 
+function normalizeData(saved, allowOnlinePhoto = false) {
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return structuredClone(DEFAULT_DATA);
+  const data = structuredClone(DEFAULT_DATA);
+  for (const [key, fallback] of Object.entries(DEFAULT_DATA)) {
+    const value = saved[key];
+    if (Array.isArray(fallback) && Array.isArray(value)) {
+      const textKeys = Object.keys(fallback[0]).filter(field => field !== 'id');
+      data[key] = value.filter(item => item && textKeys.every(field => typeof item[field] === 'string'));
+    } else if (typeof fallback === 'string' && typeof value === 'string') {
+      data[key] = value;
+    }
+  }
+  const onlinePhoto = allowOnlinePhoto && /^https:\/\//i.test(data.photo);
+  if (!onlinePhoto && data.photo !== DEFAULT_DATA.photo && !/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(data.photo)) {
+    data.photo = DEFAULT_DATA.photo;
+  }
+  if (data.description === LEGACY_DESCRIPTION) data.description = DEFAULT_DATA.description;
+  return data;
+}
+
 function getData() {
-  return structuredClone(DEFAULT_DATA);
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    console.warn('Não foi possível ler os dados salvos.');
+  }
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) {
+    return structuredClone(DEFAULT_DATA);
+  }
+
+  const data = normalizeData(saved);
+  try {
+    // A chave separada ainda identifica os dados gravados pelas versões anteriores.
+    const version = saved.catalogVersion ?? localStorage.getItem(CONTENT_VERSION_KEY);
+    if (version !== CONTENT_VERSION) {
+      data.services = structuredClone(DEFAULT_DATA.services);
+      data.testimonials = structuredClone(DEFAULT_DATA.testimonials);
+      saveData(data);
+    }
+  } catch {
+    console.warn('Não foi possível atualizar o catálogo salvo.');
+  }
+  return data;
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, catalogVersion: CONTENT_VERSION }));
 }
 
 function whatsappLink(number, message) {

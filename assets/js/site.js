@@ -40,13 +40,22 @@ function renderText() {
   }
 
   const url = whatsappLink(data.whatsapp, 'Olá, Lívia! Gostaria de agendar uma avaliação.');
-  ['header-book', 'hero-book', 'about-book'].forEach(id => linkTo(document.getElementById(id), url));
+  ['header-book', 'hero-book', 'about-book'].forEach(id => {
+    const anchor = document.getElementById(id);
+    if (url) {
+      linkTo(anchor, url);
+    } else {
+      anchor.href = '#contato';
+      anchor.removeAttribute('target');
+      anchor.removeAttribute('rel');
+    }
+  });
   const floating = document.getElementById('floating-whats');
   if (url) linkTo(floating, url);
   else floating.hidden = true;
 
   const handle = String(data.instagram || '').trim().replace(/^@/, '');
-  const instagram = /^[a-zA-Z0-9_.]{1,30}$/.test(handle)
+  const instagram = /^[a-zA-Z0-9_.]{1,30}$/.test(handle) && handle !== '.' && handle !== '..'
     ? `https://www.instagram.com/${handle}/` : null;
   const instagramHeader = document.getElementById('header-instagram');
   if (instagram) linkTo(instagramHeader, instagram);
@@ -74,8 +83,9 @@ function renderServices() {
   const select = document.getElementById('contact-service');
   const icons = ['♡', '✧', '❀', '♧', '✿'];
   grid.replaceChildren();
-  select.replaceChildren(element('option', '', 'Quero agendar uma avaliação'));
-  select.firstChild.value = 'uma avaliação';
+  const selectedService = select.value;
+  const defaultOption = select.options[0];
+  select.replaceChildren(defaultOption);
   data.services.forEach((service, index) => {
     const card = element('article', 'service-card');
     card.append(element('div', 'service-icon', icons[index % icons.length]));
@@ -90,12 +100,15 @@ function renderServices() {
     option.value = service.title;
     select.append(option);
   });
+  if (Array.from(select.options).some(option => option.value === selectedService)) {
+    select.value = selectedService;
+  }
 }
 
 function renderTestimonials() {
   const grid = document.getElementById('testimonial-grid');
   grid.replaceChildren();
-  (data.testimonials || []).forEach(testimonial => {
+  data.testimonials.forEach(testimonial => {
     const card = element('article', 'testimonial-card');
     card.append(element('p', 'testimonial-message', `“${testimonial.message}”`));
     card.append(element('strong', '', testimonial.name));
@@ -131,30 +144,31 @@ menu.querySelectorAll('a').forEach(anchor => {
 document.getElementById('contact-form').addEventListener('submit', event => {
   event.preventDefault();
   const form = event.currentTarget;
-  const name = form.elements.name.value.trim();
-  const service = form.elements.service.value;
+  const name = form.elements.namedItem('contact-name').value.trim();
+  const service = form.elements.namedItem('contact-service').value;
   if (!name) return;
   const url = whatsappLink(data.whatsapp, `Olá, Lívia! Me chamo ${name} e gostaria de conversar sobre ${service}.`);
   if (url) window.open(url, '_blank', 'noopener,noreferrer');
   else alert('O WhatsApp ainda não foi configurado.');
 });
 
-renderText();
-renderServices();
-renderTestimonials();
-renderFaqs();
+function renderSite() {
+  renderText();
+  renderServices();
+  renderTestimonials();
+  renderFaqs();
+}
 
 async function refreshSite() {
+  await supabaseReady;
   if (!db) return;
   try {
     data = await loadSiteData();
-    renderText();
-    renderServices();
-    renderTestimonials();
-    renderFaqs();
+    renderSite();
   } catch (error) {
     console.error('Não foi possível carregar o conteúdo publicado.', error);
   }
 }
 
+renderSite();
 refreshSite();

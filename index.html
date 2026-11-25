@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/supabase-config.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
   <script src="assets/js/supabase-client.js" defer></script>
   <script src="assets/js/site.js" defer></script>
 </head>
@@ -117,9 +116,9 @@
             <p>Preencha os campos e continue a conversa pelo WhatsApp.</p>
             <form id="contact-form">
               <label for="contact-name">Seu nome</label>
-              <input id="contact-name" name="name" placeholder="Como posso te chamar?" maxlength="80" required>
+              <input id="contact-name" placeholder="Como posso te chamar?" maxlength="80" required>
               <label for="contact-service">O que você procura?</label>
-              <select id="contact-service" name="service"><option value="uma avaliação">Quero agendar uma avaliação</option></select>
+              <select id="contact-service"><option value="uma avaliação">Quero agendar uma avaliação</option></select>
               <button class="btn btn-primary btn-full" type="submit">Enviar pelo WhatsApp ↗</button>
               <small>Este formulário não armazena seus dados no site.</small>
             </form>

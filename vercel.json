@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "node build-vercel.cjs",
+  "outputDirectory": "vercel-static",
+  "functions": {
+    "api/admin.js": { "includeFiles": "admin.html" }
+  },
+  "redirects": [
+    { "source": "/admin.html", "destination": "/admin", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/admin", "destination": "/api/admin" }
+  ]
+}
