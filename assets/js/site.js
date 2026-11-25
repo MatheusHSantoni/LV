@@ -46,7 +46,7 @@ function renderText() {
   else floating.hidden = true;
 
   const handle = String(data.instagram || '').trim().replace(/^@/, '');
-  const instagram = /^[a-zA-Z0-9_.]{1,30}$/.test(handle)
+  const instagram = /^[a-zA-Z0-9_.]{1,30}$/.test(handle) && handle !== '.' && handle !== '..'
     ? `https://www.instagram.com/${handle}/` : null;
   const instagramHeader = document.getElementById('header-instagram');
   if (instagram) linkTo(instagramHeader, instagram);
@@ -91,7 +91,7 @@ function renderServices() {
 
 function renderTestimonials() {
   const grid = document.getElementById('testimonial-grid');
-  (data.testimonials || []).forEach(testimonial => {
+  data.testimonials.forEach(testimonial => {
     const card = element('article', 'testimonial-card');
     card.append(element('p', 'testimonial-message', `“${testimonial.message}”`));
     card.append(element('strong', '', testimonial.name));
@@ -126,8 +126,8 @@ menu.querySelectorAll('a').forEach(anchor => {
 document.getElementById('contact-form').addEventListener('submit', event => {
   event.preventDefault();
   const form = event.currentTarget;
-  const name = form.elements.name.value.trim();
-  const service = form.elements.service.value;
+  const name = form.elements.namedItem('contact-name').value.trim();
+  const service = form.elements.namedItem('contact-service').value;
   if (!name) return;
   const url = whatsappLink(data.whatsapp, `Olá, Lívia! Me chamo ${name} e gostaria de conversar sobre ${service}.`);
   if (url) window.open(url, '_blank', 'noopener,noreferrer');

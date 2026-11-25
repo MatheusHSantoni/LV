@@ -22,11 +22,15 @@ Abra a pasta no VS Code e execute usando a extensão Live Server (ou outro servi
 - WhatsApp: `(83) 99395-0371` (link `wa.me/5583993950371`)
 - CREFITO: CREFITO 21 - 446966-F exibido próximo à foto e editável no painel.
 
-## Limitação importante
+## Acesso ao painel na Vercel
 
-O editor `admin.html` **não possui autenticação**. As alterações são gravadas via `localStorage` apenas no navegador/dispositivo usado. Ele é um protótipo para testar layout e edição, **não um painel seguro e funcional para publicação na internet**. Não publique `admin.html` como área administrativa definitiva.
+1. Em **Settings → Environment Variables**, adicione `ADMIN_PASSWORD` com a senha escolhida. Marque a variável como **Sensitive** e selecione **Production** e, se necessário, **Preview**.
+2. Faça um novo deploy com este código.
+3. Abra `/admin` e entre com o e-mail `liviavaleskaduarte10@gmail.com` e a senha definida.
 
-Para sua esposa atualizar o site e todos os visitantes verem o resultado, a próxima etapa é conectar a um serviço como Supabase, com login seguro, políticas de acesso e armazenamento de imagens. Isso continua sem exigir Python ou servidor próprio.
+A função em `api/admin.js` valida as credenciais no servidor antes de entregar o HTML do painel. Sem a variável configurada, o painel fica indisponível. O modo local com Live Server abre os arquivos diretamente.
+
+O painel grava as edições em `localStorage` no mesmo navegador. Publicar essas edições para todos os visitantes requer armazenamento compartilhado.
 
 As descrições são exemplos iniciais: a profissional deve revisar os textos clínicos antes da publicação.
 
@@ -38,7 +42,3 @@ As descrições são exemplos iniciais: a profissional deve revisar os textos cl
 - Cinco relatos ilustrativos exibindo apenas nome e comentário em cada cartão; a seção esclarece que **não são avaliações reais**. Antes da publicação, substitua por depoimentos autênticos com autorização.
 - Os dados padrão ficam em `assets/js/data.js`. O `index.html` contém a estrutura da página, e o `site.js` apresenta os dados. Edições salvas no painel prevalecem sobre os dados padrão.
 - Uma atualização única do catálogo substitui a lista antiga de serviços e relatos no armazenamento local; outras informações salvas são preservadas. As alterações futuras no painel serão mantidas.
-
-## Limitações da área administrativa
-
-O `admin.html` continua sendo um protótipo, sem login seguro e com salvamento apenas no navegador (localStorage). Para edições aparecerem para todos, é necessário integrar serviço de dados/autenticação como Supabase.

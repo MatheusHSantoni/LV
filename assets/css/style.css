@@ -500,12 +500,12 @@ img {
 .contact-card form {
   display:grid;
   gap:8px}
-.contact-card label,.field label,.login-card label {
+.contact-card label,.field label {
   display:block;
   font-size:12px;
   font-weight:700;
   color:var(--purple-dark)}
-.contact-card input,.contact-card select,.field input,.field textarea,.login-card input {
+.contact-card input,.contact-card select,.field input,.field textarea {
   width:100%;
   border:1px solid #dfc9e6;
   border-radius:9px;
@@ -514,7 +514,7 @@ img {
   outline:none;
   color:var(--ink);
   min-width:0}
-.contact-card input:focus,.contact-card select:focus,.field input:focus,.field textarea:focus,.login-card input:focus {
+.contact-card input:focus,.contact-card select:focus,.field input:focus,.field textarea:focus {
   border-color:var(--purple);
   box-shadow:0 0 0 3px #c5a5d540}
 .contact-card form .btn {
@@ -586,47 +586,15 @@ img {
   z-index:10}
 
 
+.instagram-link[hidden],.floating-whats[hidden] {
+  display:none}
+
 /* Painel administrativo */
 
-.admin-login-wrap {
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  background:radial-gradient(circle at 85% 10%,#e8d8f2,transparent 42%),var(--light);
-  padding:30px}
-.login-card {
-  width:min(425px,100%);
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:36px;
-  box-shadow:var(--shadow)}
 .back-link {
   font-size:12px;
   color:var(--purple);
   font-weight:700}
-.login-monogram {
-  width:65px;
-  height:65px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  color:#fff;
-  background:var(--purple);
-  font:700 25px Georgia,serif;
-  margin:25px 0}
-.login-card h1 {
-  font-size:35px;
-  margin-bottom:8px}
-.login-card p {
-  color:var(--muted);
-  font-size:14px}
-.login-card form {
-  display:grid;
-  gap:12px;
-  margin-top:22px}
-.login-card .btn {
-  margin-top:8px}
 .admin-shell {
   display:grid;
   grid-template-columns:260px minmax(0,1fr);

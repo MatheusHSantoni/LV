@@ -43,33 +43,52 @@ const DEFAULT_DATA = {
   ]
 };
 
-function getData() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-      const merged = { ...structuredClone(DEFAULT_DATA), ...saved };
-      // Mantém edições anteriores, mas atualiza conteúdo padrão e serviços removidos.
-      if (saved.description === LEGACY_DESCRIPTION) {
-        merged.description = DEFAULT_DATA.description;
-      }
-      // Atualiza somente uma vez o catálogo antigo, preservando textos e contatos salvos.
-      if (localStorage.getItem(CONTENT_VERSION_KEY) !== CONTENT_VERSION) {
-        merged.services = structuredClone(DEFAULT_DATA.services);
-        merged.testimonials = structuredClone(DEFAULT_DATA.testimonials);
-        saveData(merged);
-        localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
-      }
-      return merged;
+function normalizeData(saved) {
+  const data = structuredClone(DEFAULT_DATA);
+  for (const [key, fallback] of Object.entries(DEFAULT_DATA)) {
+    const value = saved[key];
+    if (Array.isArray(fallback) && Array.isArray(value)) {
+      const textKeys = Object.keys(fallback[0]).filter(field => field !== 'id');
+      data[key] = value.filter(item => item && textKeys.every(field => typeof item[field] === 'string'));
+    } else if (typeof fallback === 'string' && typeof value === 'string') {
+      data[key] = value;
     }
-  } catch (error) {
-    console.warn('Não foi possível ler os dados salvos.', error);
   }
-  return structuredClone(DEFAULT_DATA);
+  if (data.photo !== DEFAULT_DATA.photo && !/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(data.photo)) {
+    data.photo = DEFAULT_DATA.photo;
+  }
+  if (data.description === LEGACY_DESCRIPTION) data.description = DEFAULT_DATA.description;
+  return data;
+}
+
+function getData() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    console.warn('Não foi possível ler os dados salvos.');
+  }
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) {
+    return structuredClone(DEFAULT_DATA);
+  }
+
+  const data = normalizeData(saved);
+  try {
+    // A chave separada ainda identifica os dados gravados pelas versões anteriores.
+    const version = saved.catalogVersion ?? localStorage.getItem(CONTENT_VERSION_KEY);
+    if (version !== CONTENT_VERSION) {
+      data.services = structuredClone(DEFAULT_DATA.services);
+      data.testimonials = structuredClone(DEFAULT_DATA.testimonials);
+      saveData(data);
+    }
+  } catch {
+    console.warn('Não foi possível atualizar o catálogo salvo.');
+  }
+  return data;
 }
 
 function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, catalogVersion: CONTENT_VERSION }));
 }
 
 function whatsappLink(number, message) {
