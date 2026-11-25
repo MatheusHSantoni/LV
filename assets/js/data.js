@@ -43,7 +43,8 @@ const DEFAULT_DATA = {
   ]
 };
 
-function normalizeData(saved) {
+function normalizeData(saved, allowOnlinePhoto = false) {
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return structuredClone(DEFAULT_DATA);
   const data = structuredClone(DEFAULT_DATA);
   for (const [key, fallback] of Object.entries(DEFAULT_DATA)) {
     const value = saved[key];
@@ -54,7 +55,8 @@ function normalizeData(saved) {
       data[key] = value;
     }
   }
-  if (data.photo !== DEFAULT_DATA.photo && !/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(data.photo)) {
+  const onlinePhoto = allowOnlinePhoto && /^https:\/\//i.test(data.photo);
+  if (!onlinePhoto && data.photo !== DEFAULT_DATA.photo && !/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(data.photo)) {
     data.photo = DEFAULT_DATA.photo;
   }
   if (data.description === LEGACY_DESCRIPTION) data.description = DEFAULT_DATA.description;

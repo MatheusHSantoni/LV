@@ -1,6 +1,6 @@
 'use strict';
 
-const data = getData();
+let data = getData();
 
 function element(tag, className, value) {
   const node = document.createElement(tag);
@@ -40,7 +40,16 @@ function renderText() {
   }
 
   const url = whatsappLink(data.whatsapp, 'Olá, Lívia! Gostaria de agendar uma avaliação.');
-  ['header-book', 'hero-book', 'about-book'].forEach(id => linkTo(document.getElementById(id), url));
+  ['header-book', 'hero-book', 'about-book'].forEach(id => {
+    const anchor = document.getElementById(id);
+    if (url) {
+      linkTo(anchor, url);
+    } else {
+      anchor.href = '#contato';
+      anchor.removeAttribute('target');
+      anchor.removeAttribute('rel');
+    }
+  });
   const floating = document.getElementById('floating-whats');
   if (url) linkTo(floating, url);
   else floating.hidden = true;
@@ -73,6 +82,9 @@ function renderServices() {
   const grid = document.getElementById('service-grid');
   const select = document.getElementById('contact-service');
   const icons = ['♡', '✧', '❀', '♧', '✿'];
+  grid.replaceChildren();
+  select.replaceChildren(element('option', '', 'Quero agendar uma avaliação'));
+  select.firstChild.value = 'uma avaliação';
   data.services.forEach((service, index) => {
     const card = element('article', 'service-card');
     card.append(element('div', 'service-icon', icons[index % icons.length]));
@@ -91,6 +103,7 @@ function renderServices() {
 
 function renderTestimonials() {
   const grid = document.getElementById('testimonial-grid');
+  grid.replaceChildren();
   data.testimonials.forEach(testimonial => {
     const card = element('article', 'testimonial-card');
     card.append(element('p', 'testimonial-message', `“${testimonial.message}”`));
@@ -101,6 +114,7 @@ function renderTestimonials() {
 
 function renderFaqs() {
   const list = document.getElementById('faq-list');
+  list.replaceChildren();
   data.faqs.forEach(faq => {
     const details = element('details', 'faq-item');
     const summary = element('summary', '', faq.question);
@@ -138,3 +152,18 @@ renderText();
 renderServices();
 renderTestimonials();
 renderFaqs();
+
+async function refreshSite() {
+  if (!db) return;
+  try {
+    data = await loadSiteData();
+    renderText();
+    renderServices();
+    renderTestimonials();
+    renderFaqs();
+  } catch (error) {
+    console.error('Não foi possível carregar o conteúdo publicado.', error);
+  }
+}
+
+refreshSite();
