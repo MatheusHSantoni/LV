@@ -170,5 +170,28 @@ async function refreshSite() {
   }
 }
 
+function animateSectionsOnScroll() {
+  if (!('IntersectionObserver' in window) || !('animate' in Element.prototype)) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (!isIntersecting) return;
+      observer.unobserve(target);
+      if (reducedMotion.matches || target.matches(':focus-within')) return;
+
+      target.animate([
+        { opacity: 0, transform: 'translateY(20px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], { duration: 500, easing: 'ease-out' });
+    });
+  }, { rootMargin: '0px 0px -24px 0px' });
+
+  document.querySelectorAll('main > section.section-pad > .container').forEach(section => {
+    observer.observe(section);
+  });
+}
+
 renderSite();
+animateSectionsOnScroll();
 refreshSite();

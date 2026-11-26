@@ -7,8 +7,8 @@ Site em HTML, CSS e JavaScript. A Vercel protege o acesso ao painel, e o Supabas
 1. Crie um projeto em https://supabase.com/dashboard.
 2. Abra **SQL Editor** e execute `supabase-setup.sql` (uma única vez).
 3. Em **Authentication > Providers > Email**, mantenha login por e-mail e senha habilitado. Desative cadastro público se não precisar de novos usuários.
-4. Em **Authentication > Users**, crie a conta de Lívia com o e-mail `liviavaleskaduarte10@gmail.com` e uma senha forte. Copie o **User UID**.
-5. No SQL Editor, execute `insert into public.site_admins (user_id) values ('UUID_DA_LIVIA');`, substituindo pelo UID real.
+4. Em **Authentication > Users**, crie uma conta para publicar conteúdo, com um e-mail e uma senha forte. Copie o **User UID**.
+5. No SQL Editor, execute `insert into public.site_admins (user_id) values ('UUID_DA_CONTA');`, substituindo pelo UID real.
 6. Em **Project Settings / API Keys** (ou **Connect**), copie a **Project URL** e a chave **publishable** (ou a chave legada `anon`). Coloque as duas em `assets/js/supabase-config.js`.
 7. **Nunca use** a chave `service_role` ou `secret` no HTML/JavaScript. A chave publishable é pública; a segurança vem das políticas RLS.
 8. Abra a pasta no VS Code com **Live Server** e visite `admin.html`. Faça login, edite os dados e clique em **Salvar alterações**.
@@ -35,7 +35,7 @@ Site em HTML, CSS e JavaScript. A Vercel protege o acesso ao painel, e o Supabas
 ## Acesso ao painel na Vercel
 
 1. Em **Settings → Environment Variables**, adicione `ADMIN_PASSWORD` como variável **Sensitive** em **Production** e, se necessário, **Preview**.
-2. Faça um novo deploy e abra `/admin`. Entre com `liviavaleskaduarte10@gmail.com` e a senha definida na Vercel.
+2. Faça um novo deploy e abra `/admin`. Entre com o usuário `MSantoni` e a senha definida na Vercel.
 3. Com o Supabase configurado, entre também no formulário do painel com a conta habilitada em `site_admins` para publicar conteúdo.
 
 ## Limitação de configuração
